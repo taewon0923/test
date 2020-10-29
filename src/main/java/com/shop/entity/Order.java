@@ -1,5 +1,6 @@
 package com.shop.entity;
 
+import com.shop.constant.OrderStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
