@@ -1,5 +1,6 @@
 package com.shop.entity;
 
+import com.shop.constant.ItemSellStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,14 +26,17 @@ public class Item {
     private String itemNm; //상품명
 
     @Column(name="price", nullable = false)
-    private Integer price; //가격
+    private int price; //가격
+
+    @Column(nullable = false)
+    private int stockNumber; //재고수량
 
     @Lob
     @Column(nullable = false)
     private String itemDetail; //상품 상세 설명
 
-    @Column(nullable = false, length = 2)
-    private String sellStatCd; //판매 상태
+    @Enumerated(EnumType.STRING)
+    private ItemSellStatus itemSellStatus; //상품 판매 상태
 
     @CreatedDate
     @Column(
