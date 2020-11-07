@@ -17,6 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +28,7 @@ class ItemRepositoryTest {
     @Autowired
     ItemRepository itemRepository;
 
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     @Test
@@ -124,7 +125,7 @@ class ItemRepositoryTest {
     public void queryDslTest(){
         this.createItemList();
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        QItem qItem = new QItem("i");
+        QItem qItem = QItem.item;
         JPAQuery<Item> query  = queryFactory.selectFrom(qItem)
                 .where(qItem.itemSellStatus.eq(ItemSellStatus.SELL))
                 .where(qItem.itemDetail.like("%" + "테스트 상품 상세 설명" + "%"))
