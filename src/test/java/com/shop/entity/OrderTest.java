@@ -11,9 +11,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,9 +46,11 @@ class OrderTest {
     @Test
     @DisplayName("영속성 전이 테스트")
     public void cascadeTest(){
+
         Order order = new Order();
+
         for(int i=0;i<3;i++){
-            Item item = createItem();
+            Item item = this.createItem();
             itemRepository.save(item);
             OrderItem orderItem = new OrderItem();
             orderItem.setItem(item);
@@ -61,8 +63,35 @@ class OrderTest {
         orderRepository.saveAndFlush(order);
         em.clear();
 
-        Optional<Order> savedOrder = orderRepository.findById(order.getId());
-        assertEquals(3, savedOrder.get().getOrderItems().size());
+        Order savedOrder = orderRepository.findById(order.getId())
+                .orElseThrow(EntityNotFoundException::new);
+        assertEquals(3, savedOrder.getOrderItems().size());
+    }
+
+    public Order createOrder(){
+        Order order = new Order();
+
+        for(int i=0;i<3;i++){
+            Item item = createItem();
+            itemRepository.save(item);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setItem(item);
+            orderItem.setCount(10);
+            orderItem.setOrderPrice(1000);
+            orderItem.setOrder(order);
+            order.getOrderItems().add(orderItem);
+        }
+
+        orderRepository.save(order);
+        return order;
+    }
+
+    @Test
+    @DisplayName("고아객체 제거 테스트")
+    public void orphanRemovalTest(){
+        Order order = this.createOrder();
+        order.getOrderItems().remove(0);
+        em.flush();
     }
 
 }
