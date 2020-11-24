@@ -1,6 +1,5 @@
 package com.shop.service;
 
-import com.shop.entity.Item;
 import com.shop.entity.ItemImg;
 import com.shop.repository.ItemImgRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
 import java.io.FileOutputStream;
 import java.util.UUID;
@@ -33,8 +31,7 @@ public class ItemImgService {
     }
 
     public void saveItemImg(ItemImg itemImg, MultipartFile itemImgFile) throws Exception{
-
-        if(StringUtils.isEmpty(itemImgFile.getOriginalFilename())) {
+        if(itemImg.getId() == null || !itemImgFile.isEmpty()) {
             //파일 업로드
             String originalImgName = itemImgFile.getOriginalFilename();
             String itemImgName = generateItemImgName(originalImgName);
@@ -48,9 +45,8 @@ public class ItemImgService {
             itemImg.setImgName(itemImgName);
             itemImg.setOriImgName(originalImgName);
             itemImg.setImgUrl(imgPath);
+            itemImgRepository.save(itemImg);
         }
-
-        itemImgRepository.save(itemImg);
     }
 
 }
