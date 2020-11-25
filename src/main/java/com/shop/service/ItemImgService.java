@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import java.io.FileOutputStream;
 import java.util.UUID;
@@ -32,14 +33,20 @@ public class ItemImgService {
 
     public void saveItemImg(ItemImg itemImg, MultipartFile itemImgFile) throws Exception{
         if(itemImg.getId() == null || !itemImgFile.isEmpty()) {
-            //파일 업로드
+
             String originalImgName = itemImgFile.getOriginalFilename();
-            String itemImgName = generateItemImgName(originalImgName);
-            String imgPath = itemImgLocation + "/"+ itemImgName;
-            byte[] data = itemImgFile.getBytes();
-            FileOutputStream fos = new FileOutputStream(imgPath);
-            fos.write(data);
-            fos.close();
+            String itemImgName = "";
+            String imgPath = "";
+
+            //파일 업로드
+            if(!StringUtils.isEmpty(originalImgName)){
+                itemImgName = generateItemImgName(originalImgName);
+                imgPath = itemImgLocation + "/"+ itemImgName;
+                byte[] data = itemImgFile.getBytes();
+                FileOutputStream fos = new FileOutputStream(imgPath);
+                fos.write(data);
+                fos.close();
+            }
 
             //상품 이미지 정보 세팅
             itemImg.setImgName(itemImgName);
