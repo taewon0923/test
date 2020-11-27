@@ -37,14 +37,7 @@ public class ItemFormDto {
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Item createItem(){
-        Item item = new Item();
-        item.setId(this.id);
-        item.setItemNm(this.itemNm);
-        item.setPrice(this.price);
-        item.setItemDetail(itemDetail);
-        item.setStockNumber(this.stockNumber);
-        item.setItemSellStatus(itemSellStatus);
-        return item;
+        return modelMapper.map(this, Item.class);
     }
 
     public static ItemFormDto of(Item item){

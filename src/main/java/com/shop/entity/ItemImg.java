@@ -14,11 +14,11 @@ public class ItemImg extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String imgName;
+    private String imgName;  //이미지파일명
 
-    private String oriImgName;
+    private String oriImgName;  //원본 이미지 파일명
 
-    private String imgUrl;
+    private String imgUrl;  //저장 경로
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
