@@ -26,42 +26,49 @@ public class ItemImgService {
     public void saveItemImg(ItemImg itemImg, MultipartFile itemImgFile) throws Exception{
 
         if(itemImg.getId() == null) {
+            insertItemImg(itemImg, itemImgFile);
+        } else if(!itemImgFile.isEmpty()){
+            updateItemImg(itemImg, itemImgFile);
+        }
+    }
+
+    private void updateItemImg(ItemImg itemImg, MultipartFile itemImgFile) throws Exception {
+        Optional<ItemImg> result = itemImgRepository.findById(itemImg.getId());
+        if(result.isPresent()){
+            ItemImg savedItemImg = result.get();
+            String imgUrl = savedItemImg.getImgUrl();
+
+            //기존 이미지 파일 삭제
+            if(!StringUtils.isEmpty(savedItemImg.getImgName())) {
+                fileService.deleteFile(imgUrl);
+            }
 
             String originalImgName = itemImgFile.getOriginalFilename();
-            String itemImgName = "";
-            String imgUrl = "";
+            String itemImgName = fileService.uploadFile(itemImgLocation, originalImgName, itemImgFile.getBytes());
+            imgUrl = itemImgLocation + "/" + itemImgName;
 
-            //파일 업로드
-            if(!StringUtils.isEmpty(originalImgName)){
-                itemImgName = fileService.uploadFile(itemImgLocation, originalImgName, itemImgFile.getBytes());
-                imgUrl = itemImgLocation + "/" + itemImgName;
-            }
-
-            //상품 이미지 정보 세팅
-            itemImg.setImgName(itemImgName);
-            itemImg.setOriImgName(originalImgName);
-            itemImg.setImgUrl(imgUrl);
-            itemImgRepository.save(itemImg);
-        } else if(!itemImgFile.isEmpty()){
-            Optional<ItemImg> result = itemImgRepository.findById(itemImg.getId());
-            if(result.isPresent()){
-                ItemImg savedItemImg = result.get();
-                String imgUrl = savedItemImg.getImgUrl();
-
-                //기존 이미지 파일 삭제
-                if(!StringUtils.isEmpty(savedItemImg.getImgName())) {
-                    fileService.deleteFile(imgUrl);
-                }
-
-                String originalImgName = itemImgFile.getOriginalFilename();
-                String itemImgName = fileService.uploadFile(itemImgLocation, originalImgName, itemImgFile.getBytes());
-                imgUrl = itemImgLocation + "/" + itemImgName;
-
-                savedItemImg.setOriImgName(originalImgName);
-                savedItemImg.setImgName(itemImgName);
-                savedItemImg.setImgUrl(imgUrl);
-            }
+            savedItemImg.setOriImgName(originalImgName);
+            savedItemImg.setImgName(itemImgName);
+            savedItemImg.setImgUrl(imgUrl);
         }
+    }
+
+    private void insertItemImg(ItemImg itemImg, MultipartFile itemImgFile) throws Exception {
+        String originalImgName = itemImgFile.getOriginalFilename();
+        String itemImgName = "";
+        String imgUrl = "";
+
+        //파일 업로드
+        if(!StringUtils.isEmpty(originalImgName)){
+            itemImgName = fileService.uploadFile(itemImgLocation, originalImgName, itemImgFile.getBytes());
+            imgUrl = itemImgLocation + "/" + itemImgName;
+        }
+
+        //상품 이미지 정보 저장
+        itemImg.setImgName(itemImgName);
+        itemImg.setOriImgName(originalImgName);
+        itemImg.setImgUrl(imgUrl);
+        itemImgRepository.save(itemImg);
     }
 
 }
