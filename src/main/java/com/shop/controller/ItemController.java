@@ -27,17 +27,15 @@ public class ItemController {
         return "item/itemForm";
     }
 
-    @GetMapping(value = "/admin/item/{itemId}")
-    public String itemDtl(@PathVariable Long itemId, Model model){
-        ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
-        model.addAttribute("itemFormDto", itemFormDto);
-        return "item/itemForm";
-    }
-
     @PostMapping(value = "/admin/item/new")
     public String itemNew(@Valid ItemFormDto itemFormDto, @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList, BindingResult bindingResult, Model model){
 
         if(bindingResult.hasErrors()){
+            return "item/itemForm";
+        }
+
+        if(itemImgFileList.get(0).isEmpty() && itemFormDto.getId() == null){
+            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 입력 값 입니다.");
             return "item/itemForm";
         }
 
@@ -49,6 +47,13 @@ public class ItemController {
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping(value = "/admin/item/{itemId}")
+    public String itemDtl(@PathVariable Long itemId, Model model){
+        ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
+        model.addAttribute("itemFormDto", itemFormDto);
+        return "item/itemForm";
     }
 
     @GetMapping(value = "/admin/items")
