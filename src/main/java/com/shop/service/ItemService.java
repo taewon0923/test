@@ -25,7 +25,7 @@ public class ItemService {
     private final ItemImgService itemImgService;
     private final ItemImgRepository itemImgRepository;
 
-    public void saveItem(@Valid ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList) throws Exception{
+    public Long saveItem(@Valid ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList) throws Exception{
 
         //상품 등록
         Item item = itemFormDto.createItem();
@@ -43,6 +43,8 @@ public class ItemService {
 
             itemImgService.saveItemImg(itemImg, itemImgFileList.get(i));
         }
+
+        return item.getId();
     }
 
     @Transactional(readOnly = true)
