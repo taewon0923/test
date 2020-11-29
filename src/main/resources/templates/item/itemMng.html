@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+    <form action="/admin/item/new" role="form" method="get">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>순번</td>
+                <td>상품아이디</td>
+                <td>상품명</td>
+                <td>상태</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, status: ${items.getContent()}">
+                <td th:text="${status.index}"></td>
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.itemNm}"></td>
+                <td th:text="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL} ? '판매중' : '품절'">
+                </td>
+    <!--            <td><a th:href="@{/admin/item/${board.boardNo}}">상세페이지 이동</td>-->
+            </tr>
+            </tbody>
+        </table>
+
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${items.number eq 0}?'disabled':''">
+                <a th:href="@{__${#httpServletRequest.requestURI}__(page=${items.number-1})}" aria-label='Previous' class="page-link">
+                    <span aria-hidden='true'>Previous</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:each="no:${#numbers.sequence(0, items.totalPages-1)}" th:classappend="${items.number eq no}?'active':''">
+                <a th:href="@{__${#httpServletRequest.requestURI}__(page=${no})}" th:inline="text" class="page-link">[[${no+1}]]</a>
+            </li>
+
+            <li class="page-item" th:classappend="${items.number+1 ge items.totalPages}?'disabled':''">
+                <a th:href="@{__${#httpServletRequest.requestURI}__(page=${items.number+1})}" aria-label='Next' class="page-link">
+                    <span aria-hidden='true'>Next</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="form-inline" style="text-align: center">
+            <select class="form-control" style="width:auto;">
+                <option value="all">전체기간</option>
+                <option value="1d">1일</option>
+                <option value="1w">1주</option>
+                <option value="1m">1개월</option>
+                <option value="6m">6개월</option>
+            </select>
+            <select class="form-control" style="width:auto;">
+                <option value="all">전체(판매상태)</option>
+                <option value="sell">판매</option>
+                <option value="soldOut">품절</option>
+            </select>
+            <select class="form-control" style="width:auto;">
+                <option value="itemNm">상품명</option>
+                <option value="createdBy">등록자</option>
+            </select>
+            <input type="text" class="form-control" placeholder="검색어를 입력해주세요">
+            <button type="button" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+
+</div>
+
+</html>
