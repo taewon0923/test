@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -56,6 +57,21 @@ public class ItemController {
         return "redirect:/";
     }
 
+    @GetMapping(value = "/admin/item/{itemId}")
+    public String itemDtl(@PathVariable("itemId") Long itemId, Model model){
+
+        try {
+            ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
+            model.addAttribute("itemFormDto", itemFormDto);
+        } catch(EntityNotFoundException e){
+            model.addAttribute("errorMessage", "존재하지 않는 상품 입니다.");
+            model.addAttribute("itemFormDto", new ItemFormDto());
+            return "item/itemForm";
+        }
+
+        return "item/itemForm";
+    }
+
     @PostMapping(value = "/admin/item/{itemId}")
     public String itemUpdate(@Valid ItemFormDto itemFormDto, BindingResult bindingResult, @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList, Model model){
 
@@ -78,24 +94,9 @@ public class ItemController {
         return "redirect:/";
     }
 
-    @GetMapping(value = "/admin/item/{itemId}")
-    public String itemDtl(@PathVariable("itemId") Long itemId, Model model){
-
-        try {
-            ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
-            model.addAttribute("itemFormDto", itemFormDto);
-        } catch(EntityNotFoundException e){
-            model.addAttribute("errorMessage", "존재하지 않는 상품 입니다.");
-            model.addAttribute("itemFormDto", new ItemFormDto());
-            return "item/itemForm";
-        }
-
-        return "item/itemForm";
-    }
-
     @GetMapping(value = {"/admin/items", "/admin/items/{page}"})
     public String itemManage(ItemSearchDto itemSearchDto, @PathVariable("page") Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 3);
         Page<Item> items = itemService.getAdminItemList(itemSearchDto, pageable);
         model.addAttribute("items", items);
         model.addAttribute("itemSearchDto", itemSearchDto);

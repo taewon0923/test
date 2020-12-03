@@ -1,5 +1,6 @@
 package com.shop.dto;
 
+import com.shop.constant.ItemSellStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ public class ItemSearchDto {
 
     private String searchDateType;
 
-    private String searchSellStatus;
+    private ItemSellStatus searchSellStatus;
 
     private String searchBy;
 

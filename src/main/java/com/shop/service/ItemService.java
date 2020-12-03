@@ -33,8 +33,6 @@ public class ItemService {
         Item item = itemFormDto.createItem();
         itemRepository.save(item);
 
-        List<Long> itemImgIds = itemFormDto.getItemImgIds();
-
         //이미지 등록
         for(int i=0;i<itemImgFileList.size();i++){
             ItemImg itemImg = new ItemImg();
@@ -81,7 +79,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public Page<Item> getAdminItemList(ItemSearchDto itemSearchDto, Pageable pageable){
-        return itemRepository.findAll(pageable);
+        return itemRepository.getAdminItemPage(itemSearchDto, pageable);
     }
 
 }
