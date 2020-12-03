@@ -19,7 +19,7 @@
 
 <div layout:fragment="content">
 
-    <form th:action="@{'/admin/items/' + ${items.number}}" role="form" method="get">
+    <form th:action="@{'/admin/items/' + ${items.number}}" role="form" method="get" th:object="${items}">
         <table class="table">
             <thead>
             <tr>
@@ -52,7 +52,7 @@
                 </a>
             </li>
 
-            <li class="page-item" th:each="no:${#numbers.sequence(0, items.totalPages-1)}" th:classappend="${items.number eq no}?'active':''">
+            <li class="page-item" th:each="no:${#numbers.sequence(0, items.totalPages)}" th:classappend="${items.number eq no}?'active':''">
                 <a th:href="@{'/admin/items/' + ${no}}" th:inline="text" class="page-link">[[${no+1}]]</a>
             </li>
 
