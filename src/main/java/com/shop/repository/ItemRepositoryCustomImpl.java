@@ -53,6 +53,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
             dateTime = dateTime.minusWeeks(1);
         } else if(StringUtils.equals("1m", searchDateType)){
             dateTime = dateTime.minusMonths(1);
+        } else if(StringUtils.equals("6m", searchDateType)){
+            dateTime = dateTime.minusMonths(6);
         }
 
         return QItem.item.regTime.after(dateTime);
