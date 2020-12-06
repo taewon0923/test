@@ -9,19 +9,22 @@
 
         $(document).ready(function(){
             $("#searchBtn").on("click",function(e) {
-
-                // 폼 태그의 전송을 막음
                 e.preventDefault();
-                var searchDateType = $("#searchDateType").val();
-                var searchSellStatus = $("#searchSellStatus").val();
-                var searchBy = $("#searchBy").val();
-                var searchQuery = $("#searchQuery").val();
-                location.href="/admin/items/0" + "?searchDateType=" + searchDateType
-                + "&searchSellStatus=" + searchSellStatus
-                + "&searchBy=" + searchBy
-                + "&searchQuery=" + searchQuery;
+                page(0);
             });
         });
+
+        function page(page){
+            var searchDateType = $("#searchDateType").val();
+            var searchSellStatus = $("#searchSellStatus").val();
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href="/admin/items/" + page + "?searchDateType=" + searchDateType
+            + "&searchSellStatus=" + searchSellStatus
+            + "&searchBy=" + searchBy
+            + "&searchQuery=" + searchQuery;
+        }
 
     </script>
 </th:block>
@@ -64,18 +67,18 @@
         <div th:with="start=${(items.number/maxPage)*maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" >
             <ul class="pagination justify-content-center">
 
-                <li class="page-item" th:classappend="${items.number eq 0}?'disabled':''">
-                    <a th:href="@{'/admin/items/' + ${items.number-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Previous' class="page-link">
+                <li class="page-item" th:classappend="${items.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${items.number - 1} + ')'" aria-label='Previous' class="page-link">
                         <span aria-hidden='true'>Previous</span>
                     </a>
                 </li>
 
                 <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page-1}?'active':''">
-                    <a th:href="@{'/admin/items/' + ${page-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" th:inline="text" class="page-link">[[${page}]]</a>
+                    <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
                 </li>
 
-                <li class="page-item" th:classappend="${items.number+1 ge items.totalPages}?'disabled':''">
-                    <a th:href="@{'/admin/items/' + ${items.number+1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Next' class="page-link">
+                <li class="page-item" th:classappend="${items.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label='Next' class="page-link">
                         <span aria-hidden='true'>Next</span>
                     </a>
                 </li>

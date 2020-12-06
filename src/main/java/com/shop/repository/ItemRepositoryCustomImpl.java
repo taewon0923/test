@@ -25,21 +25,19 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    @Override
-    public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
-        QueryResults<Item> results = queryFactory
-                 .selectFrom(QItem.item)
-                .where(regDtsAfter(itemSearchDto.getSearchDateType()),
-                        searchSellStatusEq(itemSearchDto.getSearchSellStatus()),
-                        searchByEq(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery()))
-                .orderBy(QItem.item.id.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+    private BooleanExpression searchSellStatusEq(ItemSellStatus searchSellStatus){
+        return searchSellStatus == null ? null : QItem.item.itemSellStatus.eq(searchSellStatus);
+    }
 
-        List<Item> content = results.getResults();
-        long total = results.getTotal();
-        return new PageImpl<>(content, pageable, total);
+    private BooleanExpression searchByEq(String searchBy, String searchQuery){
+
+        if(StringUtils.equals("itemNm", searchBy)){
+            return QItem.item.itemNm.like("%" + searchQuery + "%");
+        } else if(StringUtils.equals("createdBy", searchBy)){
+            return QItem.item.createdBy.like("%" + searchQuery + "%");
+        }
+
+        return null;
     }
 
     private BooleanExpression regDtsAfter(String searchDateType){
@@ -60,18 +58,20 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         return QItem.item.regTime.after(dateTime);
     }
 
-    private BooleanExpression searchSellStatusEq(ItemSellStatus searchSellStatus){
-        return searchSellStatus == null ? null : QItem.item.itemSellStatus.eq(searchSellStatus);
-    }
+    @Override
+    public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        QueryResults<Item> results = queryFactory
+                .selectFrom(QItem.item)
+                .where(regDtsAfter(itemSearchDto.getSearchDateType()),
+                        searchSellStatusEq(itemSearchDto.getSearchSellStatus()),
+                        searchByEq(itemSearchDto.getSearchBy(), itemSearchDto.getSearchQuery()))
+                .orderBy(QItem.item.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
 
-    private BooleanExpression searchByEq(String searchBy, String searchQuery){
-
-        if(StringUtils.equals("itemNm", searchBy)){
-            return QItem.item.itemNm.like("%" + searchQuery + "%");
-        } else if(StringUtils.equals("createdBy", searchBy)){
-            return QItem.item.createdBy.like("%" + searchQuery + "%");
-        }
-
-        return null;
+        List<Item> content = results.getResults();
+        long total = results.getTotal();
+        return new PageImpl<>(content, pageable, total);
     }
 }
