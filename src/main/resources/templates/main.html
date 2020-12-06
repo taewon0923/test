@@ -9,12 +9,15 @@
         .carousel-inner > .item {
             height: 350px;
         }
+        .margin{
+            margin-bottom:30px;
+        }
     </style>
 </th:block>
 
 <div layout:fragment="content">
 
-    <div id="carouselControls" class="carousel slide" data-ride="carousel">
+    <div id="carouselControls" class="carousel slide margin" data-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active item">
                 <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(45).jpg"
@@ -37,6 +40,44 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
         </a>
+    </div>
+
+    <div class="row">
+        <th:block th:each="item, status: ${items.getContent()}">
+            <div class="col-md-4 margin">
+                <div class="card h-100">
+                    <a href="#">
+                        <img src="/images/item/e589c854-68e1-47b2-92b9-13df6bb3437e.png" class="card-img-top" th:alt="${item.itemNm}">
+                        <div class="card-body">
+                            <h5 class="card-title">[[${item.itemNm}]]</h5>
+                            <p class="card-text">[[${item.itemDetail}]]</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+    <div th:with="start=${(items.number/maxPage)*maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" >
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item" th:classappend="${items.number eq 0}?'disabled':''">
+                <a th:href="@{'/' + ${items.number-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Previous' class="page-link">
+                    <span aria-hidden='true'>Previous</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page-1}?'active':''">
+                <a th:href="@{'/' + ${page-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" th:inline="text" class="page-link">[[${page}]]</a>
+            </li>
+
+            <li class="page-item" th:classappend="${items.number+1 ge items.totalPages}?'disabled':''">
+                <a th:href="@{'/' + ${items.number+1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Next' class="page-link">
+                    <span aria-hidden='true'>Next</span>
+                </a>
+            </li>
+
+        </ul>
     </div>
 
 </div>
