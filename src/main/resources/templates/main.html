@@ -12,6 +12,14 @@
         .margin{
             margin-bottom:30px;
         }
+        .banner{
+            height: 300px;
+        }
+         .card-text{
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
     </style>
 </th:block>
 
@@ -20,37 +28,26 @@
     <div id="carouselControls" class="carousel slide margin" data-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active item">
-                <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(45).jpg"
-                     alt="First slide">
-            </div>
-            <div class="carousel-item item">
-                <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(46).jpg"
-                     alt="Second slide">
-            </div>
-            <div class="carousel-item item">
-                <img class="d-block w-100" src="https://mdbootstrap.com/img/Photos/Slides/img%20(47).jpg"
-                     alt="Third slide">
+                <img class="d-block w-100" src="https://user-images.githubusercontent.com/13268420/101282599-7a2c6600-3819-11eb-9e3a-8ad39948b49f.png" alt="First slide">
             </div>
         </div>
-        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+    </div>
+
+    <input type="hidden" name="searchQuery" th:value="${itemSearchDto.searchQuery}">
+    <div th:if="${not #strings.isEmpty(itemSearchDto.searchQuery)}" style="text-align:center">
+        <p class="h3" th:text="${itemSearchDto.searchQuery} + '검색 결과'"></p>
     </div>
 
     <div class="row">
         <th:block th:each="item, status: ${items.getContent()}">
             <div class="col-md-4 margin">
-                <div class="card h-100">
-                    <a href="#">
-                        <img src="/images/item/e589c854-68e1-47b2-92b9-13df6bb3437e.png" class="card-img-top" th:alt="${item.itemNm}">
+                <div class="card">
+                    <a th:href="'/item/' +${item.id}">
+                        <img th:src="${item.imgUrl}" class="card-img-top" th:alt="${item.itemNm}" height="400">
                         <div class="card-body">
-                            <h5 class="card-title">[[${item.itemNm}]]</h5>
+                            <h2 class="card-title">[[${item.itemNm}]]</h2>
                             <p class="card-text">[[${item.itemDetail}]]</p>
+                            <p class="card-text">[[${item.price}]]원</p>
                         </div>
                     </a>
                 </div>
@@ -62,17 +59,17 @@
         <ul class="pagination justify-content-center">
 
             <li class="page-item" th:classappend="${items.number eq 0}?'disabled':''">
-                <a th:href="@{'/' + ${items.number-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Previous' class="page-link">
+                <a th:href="@{'/' + '?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${items.number-1}}" aria-label='Previous' class="page-link">
                     <span aria-hidden='true'>Previous</span>
                 </a>
             </li>
 
             <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page-1}?'active':''">
-                <a th:href="@{'/' + ${page-1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" th:inline="text" class="page-link">[[${page}]]</a>
+                <a th:href="@{'/' +'?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${page-1}}" th:inline="text" class="page-link">[[${page}]]</a>
             </li>
 
             <li class="page-item" th:classappend="${items.number+1 ge items.totalPages}?'disabled':''">
-                <a th:href="@{'/' + ${items.number+1} +'?searchQuery=' + ${itemSearchDto.searchQuery}}" aria-label='Next' class="page-link">
+                <a th:href="@{'/' +'?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${items.number+1}}" aria-label='Next' class="page-link">
                     <span aria-hidden='true'>Next</span>
                 </a>
             </li>
