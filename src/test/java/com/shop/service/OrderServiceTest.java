@@ -69,15 +69,9 @@ class OrderServiceTest {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
 
-        List<OrderItem> orderItems = order.getOrderItems();
-
         int totalPrice = orderDto.getCount()*item.getPrice();
-        int resultTotalPrice = 0;
-        for (OrderItem orderItem : orderItems) {
-            resultTotalPrice += orderItem.getOrderPrice();
-        }
 
-        assertEquals(totalPrice, resultTotalPrice);
+        assertEquals(totalPrice, order.getTotalPrice());
     }
 
 }

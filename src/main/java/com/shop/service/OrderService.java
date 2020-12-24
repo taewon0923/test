@@ -3,10 +3,8 @@ package com.shop.service;
 import com.shop.dto.OrderDto;
 import com.shop.dto.OrderHistDto;
 import com.shop.dto.OrderItemDto;
-import com.shop.entity.Item;
-import com.shop.entity.Member;
-import com.shop.entity.Order;
-import com.shop.entity.OrderItem;
+import com.shop.entity.*;
+import com.shop.repository.ItemImgRepository;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
 import com.shop.repository.OrderRepository;
@@ -29,6 +27,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
+    private final ItemImgRepository itemImgRepository;
 
     public Long order(OrderDto orderDto, String email){
         Item item = itemRepository.findById(orderDto.getItemId())
@@ -54,10 +53,10 @@ public class OrderService {
 
         for (Order order : orders) {
             OrderHistDto orderHistDto = new OrderHistDto(order);
-
             List<OrderItem> orderItems = order.getOrderItems();
             for (OrderItem orderItem : orderItems) {
-                OrderItemDto orderItemDto = new OrderItemDto(orderItem);
+                ItemImg itemImg = itemImgRepository.findByItemIdAndRepimgYn(orderItem.getItem().getId(), "Y");
+                OrderItemDto orderItemDto = new OrderItemDto(orderItem, itemImg.getImgUrl());
                 orderHistDto.addOrderItemDto(orderItemDto);
             }
 

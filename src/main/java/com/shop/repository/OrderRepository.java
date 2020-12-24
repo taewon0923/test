@@ -12,7 +12,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select distinct o from Order o " +
             "join fetch o.orderItems oi " +
-            "join fetch oi.item " +
+            "join fetch oi.item i " +
             "where o.member.email = :email " +
             "order by o.orderDate desc"
     )
