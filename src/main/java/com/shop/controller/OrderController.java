@@ -57,9 +57,15 @@ public class OrderController {
         Page<OrderHistDto> ordersHistDtoList = orderService.getOrderList(principal.getName(), pageable);
 
         model.addAttribute("orders", ordersHistDtoList);
-        model.addAttribute("page", page);
+        model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("maxPage", 5);
         return "order/orderHist";
+    }
+
+    @PostMapping("/order/{orderId}/cancel")
+    public @ResponseBody ResponseEntity cancelOrder(@PathVariable("orderId") Long orderId){
+        orderService.cancelOrder(orderId);
+        return new ResponseEntity<Long>(orderId, HttpStatus.OK);
     }
 
 }

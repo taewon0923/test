@@ -44,6 +44,7 @@ public class OrderService {
         return order.getId();
     }
 
+    @Transactional(readOnly = true)
     public Page<OrderHistDto> getOrderList(String email, Pageable pageable) {
 
         List<Order> orders  = orderRepository.findOrders(email, pageable);
@@ -65,4 +66,11 @@ public class OrderService {
 
         return new PageImpl<OrderHistDto>(orderHistDtos, pageable, totalCount);
     }
+
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
+        order.cancelOrder();
+    }
+
 }
