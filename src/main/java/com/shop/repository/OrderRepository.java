@@ -10,9 +10,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("select distinct o from Order o " +
-            "join fetch o.orderItems oi " +
-            "join fetch oi.item i " +
+    @Query("select o from Order o " +
             "where o.member.email = :email " +
             "order by o.orderDate desc"
     )
